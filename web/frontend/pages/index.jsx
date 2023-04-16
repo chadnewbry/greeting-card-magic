@@ -7,7 +7,11 @@ import {
   Stack,
   Link,
   Heading,
+  Subheading,
+  List,
+  // Text,
 } from "@shopify/polaris";
+
 import { TitleBar } from "@shopify/app-bridge-react";
 
 import { trophyImage } from "../assets";
@@ -17,7 +21,7 @@ import { ProductsCard } from "../components";
 export default function HomePage() {
   return (
     <Page narrowWidth>
-      <TitleBar title="App name" primaryAction={null} />
+      <TitleBar title="Greeting Card Magic" primaryAction={null} />
       <Layout>
         <Layout.Section>
           <Card sectioned>
@@ -29,25 +33,60 @@ export default function HomePage() {
             >
               <Stack.Item fill>
                 <TextContainer spacing="loose">
-                  <Heading>Nice work on building a Shopify app 🎉</Heading>
+                  <Heading>Thanks for installing Greeting Card Magic 🎉</Heading>
+                {/* <Text variant="heading4xl" as="h1">Thanks for installing Greeting Card Magic 🎉</Text> */}
                   <p>
-                    Your app is ready to explore! It contains everything you
-                    need to get started including the{" "}
-                    <Link url="https://polaris.shopify.com/" external>
-                      Polaris design system
-                    </Link>
-                    ,{" "}
-                    <Link url="https://shopify.dev/api/admin-graphql" external>
-                      Shopify Admin API
-                    </Link>
-                    , and{" "}
+                    I'm Chad 👋 the Founder / Programmer behind this project. 
+                    </p>
+                    <p>
+                    I'm here to help you get this plugin up and running! For every store
+                    that uses this plugin I provide custom support to get it installed. 
+                    </p>
+                    <Subheading>
+                      How Greeting Card Magic works...
+                    </Subheading>
+                    
+
+
+
+                    <Subheading>
+
+                    Do the following to start using Greeting Card Magic: 
+                    </Subheading>
+                    <p>
+
+              
+                    <List type="bullet">
+                      <List.Item>Visit 
+                      
+                      {" "}
                     <Link
-                      url="https://shopify.dev/apps/tools/app-bridge"
+                      url=" https://www.cardly.net/"
                       external
                     >
-                      App Bridge
+                       https://www.cardly.net/
                     </Link>{" "}
-                    UI library and components.
+                      and email me with the links
+                       to the cards you want on your store. Alternatively, email me saying 
+                       you'd like me to pick out cards that make sense for your store.</List.Item>
+                      <List.Item> Give me  
+                     {" "}
+                    <Link
+                      url="https://help.shopify.com/en/manual/shopify-plus/users/user-access"
+                      external
+                    >
+                      admin access
+                    </Link>{" "}
+                      to your store so I can add the cards you
+                       picked out as products. As part of this process I'll update your 
+                       Cart page so the cards are shown as an upsell option. Please make sure 
+                       I have the following permissions: "View products", "View product cost	
+                        ", "Create and edit products", "Edit product cost", "Edit product price"]  </List.Item>
+                      <List.Item>Once I've gotten your store all setup I'll email you to get feedback and 
+                      make sure everything is working exactly as you'd expect</List.Item>
+                    </List>
+               
+                    
                   </p>
                   <p>
                     Ready to go? Start populating your app with some sample
