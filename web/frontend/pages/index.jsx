@@ -39,15 +39,36 @@ export default function HomePage() {
                     I'm Chad 👋 the Founder / Programmer behind this project. 
                     </p>
                     <p>
-                    I'm here to help you get this plugin up and running! For every store
-                    that uses this plugin I provide custom support to get it installed. 
+                    I'm here to help you get this plugin up and running! If at any time you
+                    need help please email me <a href="mailto:chad.newbry@gmail.com">chad.newbry@gmail.com< /a>
                     </p>
                     <Subheading>
                       How Greeting Card Magic works...
                     </Subheading>
                     
-
-
+                    <List>
+                      <List.Item>
+                        A customer goes to buy a gift from your store
+                      </List.Item>
+                      <List.Item>
+                        They see a greeting card they love once they've added their 
+                        gift to their cart
+                      </List.Item>
+                      <List.Item>
+                        They click on the card, write a custom message for it, then add it to their cart
+                      </List.Item>
+                      <List.Item>
+                        They check out. 
+                      </List.Item>
+                      <List.Item>
+                        You open the store admin and fulfill the order normally. In the admin you 
+                        see their card order and click "Request Fulfillment" > "Send fulfillment request"
+                      </List.Item>
+                      <List.Item>
+                        Greeting Card Magic gets an email with the order and handles, printing, and shipping
+                        the card to it's destination. 
+                      </List.Item>
+                    </List>
 
                     <Subheading>
 
@@ -88,20 +109,15 @@ export default function HomePage() {
                
                     
                   </p>
+
                   <p>
-                    Ready to go? Start populating your app with some sample
-                    products to view and test in your store.{" "}
+                    Looking forward to working with you! 
                   </p>
+
                   <p>
-                    Learn more about building out your app in{" "}
-                    <Link
-                      url="https://shopify.dev/apps/getting-started/add-functionality"
-                      external
-                    >
-                      this Shopify tutorial
-                    </Link>{" "}
-                    📚{" "}
+                    - Chad
                   </p>
+                
                 </TextContainer>
               </Stack.Item>
               <Stack.Item>
@@ -115,9 +131,6 @@ export default function HomePage() {
               </Stack.Item>
             </Stack>
           </Card>
-        </Layout.Section>
-        <Layout.Section>
-          <ProductsCard />
         </Layout.Section>
       </Layout>
     </Page>
