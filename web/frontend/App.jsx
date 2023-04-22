@@ -21,16 +21,12 @@ export default function App() {
             <NavigationMenu
               navigationLinks={[
                 {
-                  label: "Page name",
-                  destination: "/pagename",
+                  label: "Step One",
+                  destination: "/setupfulfillment",
                 },
                 {
-                  label: "Add Cards",
+                  label: "Step Two",
                   destination: "/addcards"
-                },
-                {
-                  label: "Add Greeting Card Fulfillment",
-                  destination: "/setupfulfillment"
                 }
               ]}
             />
