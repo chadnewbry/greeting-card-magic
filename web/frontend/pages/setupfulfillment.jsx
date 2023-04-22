@@ -1,6 +1,9 @@
-import React from 'react';
-import { useQuery, gql } from 'react-query';
-import { Card, TextStyle } from '@shopify/polaris';
+import { Card, Page, Layout, TextContainer, Heading } from "@shopify/polaris";
+import { TitleBar } from "@shopify/app-bridge-react";
+// import { useQuery, gql } from 'react-query';
+// import { useAdminApi } from './hooks/useAdminApi';
+
+
 import { useAdminApi } from './hooks/useAdminApi';
 
 const FETCH_FULFILLMENT_SERVICES = gql`
@@ -19,7 +22,7 @@ const FETCH_FULFILLMENT_SERVICES = gql`
   }
 `;
 
-const CustomFulfillmentSetup = () => {
+const SetupFulfillment = () => {
   const adminApi = useAdminApi();
   const customFulfillmentServiceName = 'Greeting Card Fulfillment';
 
@@ -65,4 +68,5 @@ const CustomFulfillmentSetup = () => {
   );
 };
 
-export default CustomFulfillmentSetup;
+export default SetupFullfilment;
+

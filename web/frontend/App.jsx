@@ -30,7 +30,7 @@ export default function App() {
                 },
                 {
                   label: "Add Greeting Card Fulfillment",
-                  destination: "/cardfullfilment"
+                  destination: "/setupfulfillment"
                 }
               ]}
             />
