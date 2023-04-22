@@ -9,6 +9,7 @@ import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 // import { getFulfillmentServices } from "./fulfillmentServices.js";
 import getFullfillments from "./fulfillment-creator.js";
+import getCards from "./card-creator.js";
 
 
 
@@ -80,6 +81,22 @@ app.get("/api/fulfillments/", async (_req, res) => {
   let fulfillments = response?.response.body.data.shop.fulfillmentServices
 
   res.status(status).send({ success: status === 200, error, fulfillments});
+});
+
+// Get Cards (with a "Cards" tag)
+// Add this new route to fetch cards
+app.get("/api/cards", async (_req, res) => {
+  try {
+    const response = await getCards(res.locals.shopify.session);
+    console.log(response)
+    console.log(response?.response.body.data.products.edges)
+
+    let cards = response?.response.body.data.products.edges.map(edge => edge.node);
+
+    res.status(200).json({ cards });
+  } catch (error) {
+    res.status(500).send(`Error fetching cards: ${error.message}`);
+  }
 });
 
 
