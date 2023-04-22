@@ -9,7 +9,8 @@ import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 // import { getFulfillmentServices } from "./fulfillmentServices.js";
 import getFullfillments from "./fulfillment-creator.js";
-import getCards from "./card-creator.js";
+import { getCards, deleteCards } from "./card-creator.js";
+
 
 
 
@@ -88,8 +89,8 @@ app.get("/api/fulfillments/", async (_req, res) => {
 app.get("/api/cards", async (_req, res) => {
   try {
     const response = await getCards(res.locals.shopify.session);
-    console.log(response)
-    console.log(response?.response.body.data.products.edges)
+    // console.log(response)
+    // console.log(response?.response.body.data.products.edges)
 
     let cards = response?.response.body.data.products.edges.map(edge => edge.node);
 
@@ -98,6 +99,30 @@ app.get("/api/cards", async (_req, res) => {
     res.status(500).send(`Error fetching cards: ${error.message}`);
   }
 });
+
+// Delete Cards
+// app.delete("/api/cards", async (req, res) => {
+//   try {
+//     const { cardIds } = req.body;
+
+//     console.log("Trying to delete cards in the index.js file")
+
+//     await deleteCards(cardIds, res.locals.shopify.session);
+//     res.status(204).send(); // 204 No Content, indicates successful deletion
+//   } catch (error) {
+//     res.status(500).send(`Error deleting cards: ${error.message}`);
+//   }
+// });
+app.delete("/api/cards", async (req, res) => {
+  try {
+    const { cardIds } = req.body;
+    await deleteCards(cardIds, res.locals.shopify.session);
+    res.status(204).send(); // 204 No Content, indicates successful deletion
+  } catch (error) {
+    res.status(500).send(`Error deleting cards: ${error.message}`);
+  }
+});
+
 
 
 app.use(shopify.cspHeaders());

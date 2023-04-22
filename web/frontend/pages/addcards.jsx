@@ -41,6 +41,7 @@ import {
   Heading,
   IndexTable,
   useIndexResourceState,
+  Button,
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useAuthenticatedFetch } from "../hooks";
@@ -63,17 +64,69 @@ export default function AddCards() {
     fetchCards();
   }, []);
 
-  console.log(cards);
+  // async function onDeleteCards() {
+  //   try {
+  //     const response = await fetch("/api/cards", {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ cardIds: selectedResources }),
+  //     });
+  
+  //     if (response.ok) {
+  //       await fetchCards();
+  //     } else {
+  //       throw new Error("Error deleting cards");
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error deleting cards: ${error.message}`);
+  //   }
+  // }
+
+  async function onDeleteCards() {
+    try {
+      const response = await fetch("/api/cards", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cardIds: selectedResources }),
+      });
+  
+      if (response.ok) {
+        await fetchCards();
+      } else {
+        throw new Error("Error deleting cards");
+      }
+    } catch (error) {
+      console.error(`Error deleting cards: ${error.message}`);
+    }
+  }
+  
+  
 
   const rowMarkup = cards.map(
     (
-      { id, title, productType, tags }, 
+      { id, title, tags, description  }, 
       index,
     ) => (
-      <IndexTable.Row id={id} key={id} selected={selectedResources.includes(id)} position={index}>
+      <IndexTable.Row 
+        id={id} 
+        key={id} 
+        selected={selectedResources.includes(id)} 
+        position={index}
+        actions={[
+          {
+            content: "Delete",
+            destructive: true, // Makes the button red
+            onAction: () => onDeleteSingleCard(id),
+          },
+        ]}
+      >
         <IndexTable.Cell>{title}</IndexTable.Cell>
-        <IndexTable.Cell>{productType}</IndexTable.Cell>
-        {/* <IndexTable.Cell>{tags.join(", ")}</IndexTable.Cell> */}
+        <IndexTable.Cell>{tags.join(", ")}</IndexTable.Cell>
+        <IndexTable.Cell>{description}</IndexTable.Cell>
       </IndexTable.Row>
     ),
   );
@@ -86,7 +139,7 @@ export default function AddCards() {
       <Layout>
         <Layout.Section>
           <Card sectioned>
-            <Heading>Card List</Heading>
+            <Heading>Cards in your Store! :)</Heading>
             <IndexTable
               resourceName={{ singular: "card", plural: "cards" }}
               itemCount={cards.length}
@@ -94,13 +147,30 @@ export default function AddCards() {
               onSelectionChange={handleSelectionChange}
               headings={[
                 { title: "Title" },
-                { title: "Product Type" },
                 { title: "Tags" },
+                { title: "Description" },
               ]}
             >
               {rowMarkup}
             </IndexTable>
+            
+            
           </Card>
+          <Card sectioned>
+          <Button
+              onClick={() => {
+                // Add the delete function here
+                onDeleteCards(selectedResources)
+              }}
+              disabled={selectedResources.length === 0}
+              destructive={selectedResources.length > 0}
+            >
+              {selectedResources.length === 1
+                ? "Delete 1 Card"
+                : `Delete ${selectedResources.length} Cards`}
+            </Button>
+          </Card>
+  
         </Layout.Section>
       </Layout>
     </Page>
