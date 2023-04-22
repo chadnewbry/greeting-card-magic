@@ -77,7 +77,9 @@ app.get("/api/fulfillments/", async (_req, res) => {
     error = e.message;
   }
 
-  res.status(status).send({ success: status === 200, error, response});
+  let fulfillments = response?.response.body.data.shop.fulfillmentServices
+
+  res.status(status).send({ success: status === 200, error, fulfillments});
 });
 
 
