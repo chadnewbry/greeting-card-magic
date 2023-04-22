@@ -1,72 +1,69 @@
+import { useState } from "react";
 import { Card, Page, Layout, TextContainer, Heading } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
+import { useAppQuery, useAuthenticatedFetch } from "../hooks";
+// import { TitleBar } from "@shopify/app-bridge-react";
 // import { useQuery, gql } from 'react-query';
 // import { useAdminApi } from './hooks/useAdminApi';
 
 
-import { useAdminApi } from './hooks/useAdminApi';
+const SetupFullfilment = () => {
+    // const customFulfillmentServiceName = 'Greeting Card Fulfillment';
 
-const FETCH_FULFILLMENT_SERVICES = gql`
-  query {
-    shop {
-      fulfillmentServices {
-        edges {
-          node {
-            id
-            serviceName
-            email
-          }
+    const [isLoading, setIsLoading] = useState(false);
+     // this ensures we add the proper auth headers
+     // Missing Authorization header, was the request made with authenticatedFetch? | {isOnline: false}
+    const fetch = useAuthenticatedFetch();
+
+    const handleLoadFulfillments = async () => {
+        setIsLoading(true)
+        const response = fetch("/api/fulfillments/");
+
+        if (response.ok) {
+            // todo maybe show a toast indicating success? 
+
+            setIsLoading(false)
+        } else {
+            setIsLoading(false)
         }
-      }
-    }
-  }
-`;
 
-const SetupFulfillment = () => {
-  const adminApi = useAdminApi();
-  const customFulfillmentServiceName = 'Greeting Card Fulfillment';
+    };
 
-  const { isLoading, error, data } = useQuery('fetchFulfillmentServices', async () => {
-    const response = await adminApi.graphql(FETCH_FULFILLMENT_SERVICES);
-    return response.data.shop.fulfillmentServices.edges;
-  });
+    return (
+            <Card
+        title="Load Fulfillments"
+        sectioned
+        primaryFooterAction={{
+          content: "Load Fulfillments",
+          onAction: handleLoadFulfillments,
+          loading: isLoading,
+        }}
+        >
+        </Card> 
+        
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+    );
+}
+  
+    // const { isLoading, error, data } = useQuery('fetchFulfillmentServices', async () => {
+    //   const response = await fetch('/api/fulfillment-services');
+    //   return response.json();
+    // });
+  
+    // if (isLoading) {
+    //   return <Text> Loading...</Text>
+    // }
+  
+    // if (error) {
+    //   return <div>Error: {error.message}</div>;
+    // }
+  
+    // const customFulfillmentService = data.find(({ node }) => {
+    //   return node.serviceName === customFulfillmentServiceName;
+    // });
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
+    
 
-  const customFulfillmentService = data.find(({ node }) => {
-    return node.serviceName === customFulfillmentServiceName;
-  });
-
-  return (
-    <Card>
-      {customFulfillmentService ? (
-        <div>
-          <TextStyle variation="positive">
-            Custom Order Fulfillment Setup
-          </TextStyle>
-          <p>
-            <button onClick={() => {}}>Go to App</button>
-          </p>
-        </div>
-      ) : (
-        <div>
-          <TextStyle variation="negative">
-            Custom Order Fulfillment Not Setup
-          </TextStyle>
-          <p>
-            To set up custom fulfillment, follow these instructions...
-          </p>
-        </div>
-      )}
-    </Card>
-  );
-};
-
-export default SetupFullfilment;
+  
+  
+  export default SetupFullfilment;
 

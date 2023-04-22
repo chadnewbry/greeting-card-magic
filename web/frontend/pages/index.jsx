@@ -40,7 +40,7 @@ export default function HomePage() {
                     </p>
                     <p>
                     I'm here to help you get this plugin up and running! If at any time you
-                    need help please email me <a href="mailto:chad.newbry@gmail.com">chad.newbry@gmail.com< /a>
+                    need help please email me <a href="mailto:chad.newbry@gmail.com">chad.newbry@gmail.com</a>
                     </p>
                     <Subheading>
                       How Greeting Card Magic works...

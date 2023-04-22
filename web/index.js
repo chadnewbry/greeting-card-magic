@@ -1,12 +1,16 @@
 // @ts-check
 import { join } from "path";
-import { readFileSync } from "fs";
+import { readFileSync, stat } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
+// import { getFulfillmentServices } from "./fulfillmentServices.js";
+import getFullfillments from "./fulfillment-creator.js";
+
+
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 
@@ -57,6 +61,24 @@ app.get("/api/products/create", async (_req, res) => {
   res.status(status).send({ success: status === 200, error });
 });
 
+// trying to add support to ask for fullfilment services
+
+app.get("/api/fulfillments/", async (_req, res) => {
+  let status = 200;
+  let error = null;
+
+  try {
+    await getFullfillments(res.locals.shopify.session);
+  } catch (e) {
+    console.log(`Failed to process /fulfillments: ${e.message} `);
+    status = 500
+    error = e.message;
+  }
+
+  res.status(status).send({ success: status === 200, error });
+})
+
+
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
 
@@ -66,5 +88,29 @@ app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
     .set("Content-Type", "text/html")
     .send(readFileSync(join(STATIC_PATH, "index.html")));
 });
+
+
+// trying to add support for my frontend to ask for what fulfillment services we already have ... 
+
+// Add this new route to fetch fulfillment services
+// app.get('/api/fulfillment-services', async (req, res) => {
+//   const session = res.locals.shopify.session;
+
+//   if (!session) {
+//     res.status(401).send('Unauthorized');
+//     return;
+//   }
+
+//   try {
+//     const fulfillmentServices = await getFulfillmentServices(session.shop, session.accessToken);
+//     res.json(fulfillmentServices);
+    
+//   } catch (error) {
+//     res.status(500).send(`Error fetching fulfillment services: ${error.message}`);
+//   }
+// });
+
+// ...
+
 
 app.listen(PORT);
