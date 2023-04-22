@@ -20,7 +20,7 @@ export default async function getFullfillments(
     const client = new shopify.api.clients.Graphql({ session })
 
     try {
-        await client.query({
+        const response = await client.query({
             data: {
                 query: GET_FULFILLMENT,
                 variables: {
@@ -28,6 +28,17 @@ export default async function getFullfillments(
                 },
             },
         });
+
+        // get the data 
+        // Extract the fulfillment data from the response
+        // const fulfillments = response.data.shop.fulfillmentServices.edges.map(
+        //     (edge) => edge.node
+        // );
+
+        // console.log(response)
+    
+        return { response }
+
     } catch (error) {
         if (error instanceof GraphqlQueryError) {
             throw new Error(

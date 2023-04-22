@@ -66,17 +66,19 @@ app.get("/api/products/create", async (_req, res) => {
 app.get("/api/fulfillments/", async (_req, res) => {
   let status = 200;
   let error = null;
-
+  // let fulfillments = [];
+  let response
   try {
-    await getFullfillments(res.locals.shopify.session);
+    response = await getFullfillments(res.locals.shopify.session);
+    console.log(response)
   } catch (e) {
     console.log(`Failed to process /fulfillments: ${e.message} `);
-    status = 500
+    status = 500;
     error = e.message;
   }
 
-  res.status(status).send({ success: status === 200, error });
-})
+  res.status(status).send({ success: status === 200, error, response});
+});
 
 
 app.use(shopify.cspHeaders());

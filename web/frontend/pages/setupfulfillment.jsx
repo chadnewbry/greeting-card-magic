@@ -10,26 +10,52 @@ const SetupFullfilment = () => {
     // const customFulfillmentServiceName = 'Greeting Card Fulfillment';
 
     const [isLoading, setIsLoading] = useState(false);
+    const [fulfillments, setFulfillments] = useState([]);
      // this ensures we add the proper auth headers
      // Missing Authorization header, was the request made with authenticatedFetch? | {isOnline: false}
     const fetch = useAuthenticatedFetch();
 
     const handleLoadFulfillments = async () => {
         setIsLoading(true)
-        const response = fetch("/api/fulfillments/");
+        const response = await fetch("/api/fulfillments/");
+
+        console.log(response)
+        
 
         if (response.ok) {
             // todo maybe show a toast indicating success? 
-
+            const json = await response.json();
+            console.log(json)
+            console.log(json.response)
+            console.log(json.response.response)
+            console.log(json.response.response.body)
+            console.log(json.response.response.body.data.shop.fulfillmentServices)
+            // console.log(data.fulfillments)
+            // setFulfillments(data.fulfillments);
             setIsLoading(false)
         } else {
             setIsLoading(false)
         }
-
     };
 
+    const renderFulfillments = () => {
+        if (!fulfillments.length) {
+          return <p>No fulfillments found.</p>;
+        }
+    
+        return (
+            <Text>We have fulfillments</Text>
+        //   <ul>
+        //     {fulfillments.map((fulfillment, index) => (
+        //       <li key={index}>{fulfillment.name}</li>
+        //     ))}
+        //   </ul>
+        );
+      };
+
     return (
-            <Card
+        <Page>
+               <Card
         title="Load Fulfillments"
         sectioned
         primaryFooterAction={{
@@ -38,9 +64,15 @@ const SetupFullfilment = () => {
           loading: isLoading,
         }}
         >
+             {renderFulfillments()}
         </Card> 
-        
-
+        {/* <Card>
+            if (!fulfillments.length) {
+       <p>No fulfillments found.</p>
+    }
+        </Card> */}
+        </Page>
+         
     );
 }
   
