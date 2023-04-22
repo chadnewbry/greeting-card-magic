@@ -13,8 +13,7 @@
   },
   "dependencies": {
     "@shopify/app": "3.45.1",
-    "@shopify/cli": "3.45.1",
-    "@shopify/shopify-api": "^7.0.0"
+    "@shopify/cli": "3.45.1"
   },
   "author": "chadnewbry"
 }
