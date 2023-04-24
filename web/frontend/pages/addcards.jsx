@@ -1,37 +1,3 @@
-// import { Card, Page, Layout, TextContainer, Heading } from "@shopify/polaris";
-// import { TitleBar } from "@shopify/app-bridge-react";
-
-// export default function AddCards() {
-//   return (
-//     <Page>
-//       <TitleBar
-//         title="Add Cards"
-//         // primaryAction={{
-//         //   content: "Primary action",
-//         //   onAction: () => console.log("Primary action"),
-//         // }}
-//         // secondaryActions={[
-//         //   {
-//         //     content: "Secondary action",
-//         //     onAction: () => console.log("Secondary action"),
-//         //   },
-//         // ]}
-//       />
-//       // test
-//       <Layout>
-//         <Layout.Section>
-//           <Card sectioned>
-//             <Heading>Heading</Heading>
-//             <TextContainer>
-//               <p>Body</p>
-//             </TextContainer>
-//           </Card>
-//         </Layout.Section>
-//       </Layout>
-//     </Page>
-//   );
-// }
-
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -53,53 +19,108 @@ export default function AddCards() {
   const [sanityCards, setSanityCards] = useState([]); // cards from my sanity headless CMS 
 
   const fetch = useAuthenticatedFetch();
-  const {selectedResources, allResourcesSelected, handleSelectionChange} =
+  const {selectedResources, allResourcesSelected, handleSelectionChangedTest} =
   useIndexResourceState(cards);
 
+  // const handleSanitySelectionChange = useCallback((resources) => {
+  //   handleSanitySelectionChange(resources);
+  // }, []);
+
+  //console.log('sanityCards:', sanityCards);
+  const {selectedSanityResources, allSanityResourcesSelected, handleSelectionChange} = 
+  useIndexResourceState(sanityCards);
+  console.log("selectedSanityResources:", selectedSanityResources);
+console.log("allSanityResourcesSelected:", allSanityResourcesSelected);
+console.log("handleSanitySelectionChange:", handleSelectionChange);
+
+
+
   useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+  
+    async function fetchCards() {
+      const response = await fetch("/api/cards", { signal });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Cards data.cards", data.cards);
+        setCards(data.cards);
+      }
+    }
+  
+    async function fetchSanityCards() {
+      try {
+        const fetchedSanityCards = await sanityClient.fetch('*[_type == "card"]', {}, { signal });
+    
+        console.log('Sanity cards:', fetchedSanityCards[0]);
+        if (fetchedSanityCards) {
+          const transformedSanityCards = fetchedSanityCards.map(card => ({
+            id: card._id,
+            title: card.title,
+            description: card.description_html,
+            productType: card._type,
+            tags: card.tags,
+          }));
+    
+          console.log('interior Sanity cards:', transformedSanityCards);
+          setSanityCards(transformedSanityCards);
+          console.log('after Sanity cards:', sanityCards);
+        }
+      } catch (error) {
+        setSanityCards([]); // set to empty array if we encounter an error
+        console.error('Error fetching Sanity cards:', error);
+      }
+    }
+  
     fetchCards();
     fetchSanityCards();
+  
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
-  async function fetchCards() { 
-    const response = await fetch("/api/cards");
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data)
-      setCards(data.cards);
-    }
-  }
 
-  async function fetchSanityCards() {
+  async function onDeleteCards() {
     try {
-      const fetchedSanityCards = await sanityClient.fetch('*[_type == "card"]');
-      console.log('Sanity cards:', fetchedSanityCards);
-      setSanityCards(fetchedSanityCards);
+      const response = await fetch("/api/cards", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cardIds: selectedResources }),
+      });
+  
+      if (response.ok) {
+        await fetchCards();
+      } else {
+        throw new Error("Error deleting cards");
+      }
     } catch (error) {
-      console.error('Error fetching Sanity cards:', error);
+      console.error(`Error deleting cards: ${error.message}`);
     }
   }
 
-
-  // async function onDeleteCards() {
-  //   try {
-  //     const response = await fetch("/api/cards", {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ cardIds: selectedResources }),
-  //     });
+  async function onAddCard(_id, title, tags, description, image, image_alt_text, description_html) {
+    try {
+      const response = await fetch("/api/cards/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _id, title, tags, description, image, image_alt_text, description_html }),
+      });
   
-  //     if (response.ok) {
-  //       await fetchCards();
-  //     } else {
-  //       throw new Error("Error deleting cards");
-  //     }
-  //   } catch (error) {
-  //     console.error(`Error deleting cards: ${error.message}`);
-  //   }
-  // }
+      if (response.ok) {
+        await fetchCards();
+      } else {
+        throw new Error("Error adding card");
+      }
+    } catch (error) {
+      console.error(`Error adding card: ${error.message}`);
+    }
+  }
+  
 
   async function onDeleteCards() {
     try {
@@ -121,6 +142,7 @@ export default function AddCards() {
     }
   }
   
+
   
 
   const rowMarkup = cards.map(
@@ -152,11 +174,18 @@ export default function AddCards() {
     <IndexTable.Row
       id={_id}
       key={_id}
+      selected={selectedSanityResources ? selectedSanityResources.includes(_id) : true}
       position={index}
       // Add actions as needed
+      actions={[
+        {
+          content: "Add Card",
+          onAction: () => onAddCard(_id, title, tags, description, image, image_alt_text, description_html),
+        },
+      ]}
     >
       <IndexTable.Cell>{title}</IndexTable.Cell>
-      <IndexTable.Cell>{tags.join(", ")}</IndexTable.Cell>
+      <IndexTable.Cell>{tags ? tags.join(", ") : ""}</IndexTable.Cell>
       <IndexTable.Cell>
         {description || description_html}
         {/* Render the image if available */}
@@ -178,7 +207,7 @@ export default function AddCards() {
               resourceName={{ singular: "card", plural: "cards" }}
               itemCount={cards.length}
               selectedItemsCount={selectedResources.length}
-              onSelectionChange={handleSelectionChange}
+              onSelectionChange={handleSelectionChangedTest}
               headings={[
                 { title: "Title" },
                 { title: "Tags" },
@@ -212,6 +241,8 @@ export default function AddCards() {
           <IndexTable
             resourceName={{ singular: "card", plural: "cards" }}
             itemCount={sanityCards.length}
+            selectedItemsCount={ selectedSanityResources ? selectedSanityResources.length : 0}
+            onSelectionChange={handleSelectionChange}
             headings={[
               { title: "Title" },
               { title: "Tags" },

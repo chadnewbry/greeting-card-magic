@@ -35,9 +35,7 @@ export default function HomePage() {
                 <TextContainer spacing="loose">
                   <Heading>Thanks for installing Greeting Card Magic 🎉</Heading>
                 {/* <Text variant="heading4xl" as="h1">Thanks for installing Greeting Card Magic 🎉</Text> */}
-                  <p>
-                    I'm Chad 👋 the Founder / Programmer behind this project. 
-                    </p>
+                    <p> I'm Chad 👋 the Founder / Programmer behind this project. </p>
                     <p>
                     I'm here to help you get this plugin up and running! If at any time you
                     need help please email me <a href="mailto:chad.newbry@gmail.com">chad.newbry@gmail.com</a>
@@ -74,7 +72,7 @@ export default function HomePage() {
 
                     Do the following to start using Greeting Card Magic: 
                     </Subheading>
-                    <p>
+                    
 
               
                     <List type="bullet">
@@ -106,9 +104,7 @@ export default function HomePage() {
                       <List.Item>Once I've gotten your store all setup I'll email you to get feedback and 
                       make sure everything is working exactly as you'd expect</List.Item>
                     </List>
-               
-                    
-                  </p>
+              
 
                   <p>
                     Looking forward to working with you! 

@@ -16,6 +16,36 @@ query {
 }
 `;
 
+const ADD_CARD_MUTATION = `
+  mutation createProduct(
+    $title: String!
+    $description: String
+    $descriptionHtml: String
+    $productType: String
+    $tags: [String!]
+    $images: [ImageInput!]
+  ) {
+    productCreate(
+      input: {
+        title: $title
+        description: $description
+        descriptionHtml: $descriptionHtml
+        productType: $productType
+        tags: $tags
+        images: $images
+      }
+    ) {
+      product {
+        id
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 const DELETE_CARDS_MUTATION = `
   mutation deleteProduct($id: ID!) {
     productDelete(input: { id: $id }) {
@@ -45,6 +75,36 @@ export async function getCards(session) {
     return { response }
   } catch (error) {
     throw new Error(`Failed to fetch cards: ${error.message}`);
+  }
+}
+
+export async function addCard(cardDetails, session) {
+  const { _id, title, tags, description, image, image_alt_text, description_html } = cardDetails;
+  const client = new shopify.api.clients.Graphql({ session });
+
+  try {
+    console.log("Trying to add card...")
+    const response = await client.query({
+      data: {
+        query: ADD_CARD_MUTATION,
+        variables: {
+          title,
+          description,
+          descriptionHtml: description_html,
+          productType: "Card",
+          tags: [...tags, "Card"],
+          images: [{ src: image, altText: image_alt_text }],
+        },
+      },
+    });
+
+    // if (response.errors) {
+    //   throw new Error(response.errors[0].message);
+    // }
+
+    return { response };
+  } catch (error) {
+    throw new Error(`Failed to add card: ${error.message}`);
   }
 }
 

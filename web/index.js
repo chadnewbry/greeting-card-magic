@@ -9,7 +9,7 @@ import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
 // import { getFulfillmentServices } from "./fulfillmentServices.js";
 import getFullfillments from "./fulfillment-creator.js";
-import { getCards, deleteCards } from "./card-creator.js";
+import { getCards, addCard, deleteCards } from "./card-creator.js";
 
 
 
@@ -97,6 +97,19 @@ app.get("/api/cards", async (_req, res) => {
     res.status(200).json({ cards });
   } catch (error) {
     res.status(500).send(`Error fetching cards: ${error.message}`);
+  }
+});
+
+app.post("/api/cards/add", async (req, res) => {
+  try {
+    const cardDetails = req.body;
+
+    // Here, create the product in the Shopify store using the provided card details
+    await addCard(cardDetails, res.locals.shopify.session);
+    
+    res.status(201).send(); // 201 Created, indicates successful addition
+  } catch (error) {
+    res.status(500).send(`Error adding card: ${error.message}`);
   }
 });
 
