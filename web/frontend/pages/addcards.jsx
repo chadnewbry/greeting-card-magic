@@ -45,24 +45,41 @@ import {
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useAuthenticatedFetch } from "../hooks";
+import sanityClient from "../../sanityClient";
+
 
 export default function AddCards() {
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState([]); // cards on the merchant store
+  const [sanityCards, setSanityCards] = useState([]); // cards from my sanity headless CMS 
+
   const fetch = useAuthenticatedFetch();
   const {selectedResources, allResourcesSelected, handleSelectionChange} =
   useIndexResourceState(cards);
 
   useEffect(() => {
-    async function fetchCards() {
-      const response = await fetch("/api/cards");
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data)
-        setCards(data.cards);
-      }
-    }
     fetchCards();
+    fetchSanityCards();
   }, []);
+
+  async function fetchCards() { 
+    const response = await fetch("/api/cards");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data)
+      setCards(data.cards);
+    }
+  }
+
+  async function fetchSanityCards() {
+    try {
+      const fetchedSanityCards = await sanityClient.fetch('*[_type == "card"]');
+      console.log('Sanity cards:', fetchedSanityCards);
+      setSanityCards(fetchedSanityCards);
+    } catch (error) {
+      console.error('Error fetching Sanity cards:', error);
+    }
+  }
+
 
   // async function onDeleteCards() {
   //   try {
@@ -125,11 +142,28 @@ export default function AddCards() {
         ]}
       >
         <IndexTable.Cell>{title}</IndexTable.Cell>
-        <IndexTable.Cell>{tags.join(", ")}</IndexTable.Cell>
+        <IndexTable.Cell>{tags ? tags.join(", ") : ""}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
       </IndexTable.Row>
     ),
   );
+
+  const sanityRowMarkup = sanityCards.map(({ _id, title, tags, description, image, image_alt_text, description_html }, index) => (
+    <IndexTable.Row
+      id={_id}
+      key={_id}
+      position={index}
+      // Add actions as needed
+    >
+      <IndexTable.Cell>{title}</IndexTable.Cell>
+      <IndexTable.Cell>{tags.join(", ")}</IndexTable.Cell>
+      <IndexTable.Cell>
+        {description || description_html}
+        {/* Render the image if available */}
+        {image && <img src={image.asset.url} alt={image_alt_text} />}
+      </IndexTable.Cell>
+    </IndexTable.Row>
+  ));
 
                 // const media = null; // Add media if necessary
 
@@ -172,6 +206,23 @@ export default function AddCards() {
           </Card>
   
         </Layout.Section>
+        <Layout.Section>
+        <Card sectioned>
+          <Heading>Sanity Cards</Heading>
+          <IndexTable
+            resourceName={{ singular: "card", plural: "cards" }}
+            itemCount={sanityCards.length}
+            headings={[
+              { title: "Title" },
+              { title: "Tags" },
+              { title: "Description" },
+            ]}
+          >
+            {sanityRowMarkup}
+          </IndexTable>
+        </Card>
+        {/* Add any actions needed for the Sanity cards */}
+      </Layout.Section>
       </Layout>
     </Page>
   );

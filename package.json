@@ -12,6 +12,7 @@
     "deploy": "shopify app deploy"
   },
   "dependencies": {
+    "@sanity/client": "^5.4.2",
     "@shopify/app": "3.45.1",
     "@shopify/cli": "3.45.1"
   },
