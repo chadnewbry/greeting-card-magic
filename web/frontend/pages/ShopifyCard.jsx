@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { IndexTable, Card, Heading, Button, useIndexResourceState } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
 
-export function ShopifyCards({ onDeleteSingleCard, onDeleteCards }) {
+export function ShopifyCards({ onDeleteSingleCard, onDeleteCards, onCardAdded}) {
   // ...
   // Move cards related state, useEffect, and helper functions here
   // ...
@@ -30,7 +30,7 @@ export function ShopifyCards({ onDeleteSingleCard, onDeleteCards }) {
     return () => {
       abortController.abort();
     };
-  }, []);
+  }, [onCardAdded]);
 
   async function onDeleteCards() {
     try {

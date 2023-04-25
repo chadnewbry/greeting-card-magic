@@ -4,7 +4,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import { IndexTable, Heading, Card, useIndexResourceState } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
 
-export function SanityCards({ onAddCard }) {
+export function SanityCards({ onAddCardCallback }) {
   // ...
   // Move sanityCards related state, useEffect, and helper functions here
   // ...
@@ -97,13 +97,16 @@ export function SanityCards({ onAddCard }) {
           },
           body: jsonBlob,
         });
+
+        onAddCardCallback()
+        
   
         if (!response.ok) {
           throw new Error(`Error adding card for resource ${resource._id}`);
         }
       }
   
-      await fetchSanityCards();
+      // await fetchSanityCards();
     } catch (error) {
       console.error(`Error adding cards: ${error.message}`);
     }
@@ -136,7 +139,7 @@ export function SanityCards({ onAddCard }) {
 
   return (
     <Card sectioned>
-    <Heading>Sanity Cards</Heading>
+    <Heading>Available Cards to add to your store 👇</Heading>
     <IndexTable
       resourceName={{ singular: "card", plural: "cards" }}
       itemCount={sanityCards.length}

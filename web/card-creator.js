@@ -19,7 +19,6 @@ query {
 const ADD_CARD_MUTATION = `
   mutation createProduct(
     $title: String!
-    $description: String
     $descriptionHtml: String
     $productType: String
     $tags: [String!]
@@ -84,15 +83,15 @@ export async function addCard(cardDetails, session) {
   try {
     console.log("Trying to add card...")
 
-    const variales = {
+    const variables = {
       title,
       descriptionHtml: description_html,
       productType: "Card",
-      tags: [...tags, "Card"],
+      tags: tags,
       images: [{ src: image, altText: image_alt_text }],
     } 
 
-    console.log("variables", variales)
+    console.log("variables", variables)
 
     const response = await client.query({
       data: {
