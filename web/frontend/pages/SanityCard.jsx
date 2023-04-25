@@ -48,6 +48,7 @@ export function SanityCards({ onAddCardCallback }) {
             return {
               ...card,
               id: card._id,
+              image_url: builder.image(card.image.asset._ref).url()
             };
           });
     
@@ -77,7 +78,7 @@ export function SanityCards({ onAddCardCallback }) {
             throw new Error(`Resource with ID ${resourceId} not found`);
           }
 
-        const { title, tags, image, image_alt_text, description_html } = resource;
+        const { title, sku, tags, image_url, image_alt_text, description_html } = resource;
 
 
         // Check if tags is an array before using it
@@ -86,9 +87,9 @@ export function SanityCards({ onAddCardCallback }) {
         console.log(resource)
         
 
-        const imageUrl = builder.image(resource.image.asset._ref).url();
+        // const imageUrl = builder.image(resource.image.asset._ref).url();
         console.log(imageUrl)
-        const jsonBlob = JSON.stringify({ title, tags, image: imageUrl, image_alt_text, description_html })
+        const jsonBlob = JSON.stringify({ title, sku, tags, image: image_url, image_alt_text, description_html })
         console.log(jsonBlob)
         const response = await fetch("/api/cards/add", {
           method: "POST",
@@ -120,20 +121,30 @@ export function SanityCards({ onAddCardCallback }) {
     }
   ];
 
-  const sanityRowMarkup = sanityCards.map(({ _id, title, tags, image, image_alt_text, description_html }, index) => (
+  const sanityRowMarkup = sanityCards.map(({ _id, title, sku, tags, image_url, image_alt_text, description_html }, index) => (
     <IndexTable.Row
       id={_id}
       key={_id}
       selected={selectedResources.includes(_id)}
       position={index}
     >
-      <IndexTable.Cell>{title}</IndexTable.Cell>
-      <IndexTable.Cell>{tags ? tags.join(", ") : ""}</IndexTable.Cell>
-      <IndexTable.Cell>
-        {description_html}
-        {/* Render the image if available */}
-        {image && <img src={image.asset.url} alt={image_alt_text} />}
+      <IndexTable.Cell style={{ whiteSpace: "normal", wordWrap: "break-word" }}>
+        <Card sectioned>
+        {title}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={image_url} alt={image_alt_text} style={{ maxHeight: "250px", marginRight: "20px" }} />
+            {/* {description_html} */}
+            {/* <div style={{ width: '200px' }} dangerouslySetInnerHTML={{ __html: description_html } } /> */}
+          </div>
+        </Card>
       </IndexTable.Cell>
+      <IndexTable.Cell>{sku} </IndexTable.Cell>
+      <IndexTable.Cell>{tags ? tags.join(", ") : ""}</IndexTable.Cell>
+      {/* <IndexTable.Cell>
+        {description_html}
+        
+      </IndexTable.Cell> */}
+      
     </IndexTable.Row>
   ));
 
@@ -146,11 +157,13 @@ export function SanityCards({ onAddCardCallback }) {
       selectedItemsCount={ selectedResources.length}
       onSelectionChange={handleSelectionChange}
       headings={[
-        { title: "Title" },
+        { title: "Card" },
+        { title: "SKU" },
         { title: "Tags" },
-        { title: "Description" },
+        // { title: "Description" }
       ]}
       promotedBulkActions={promotedBulkActions}
+      // condensed = {true}
     >
       {sanityRowMarkup}
     </IndexTable>

@@ -10,6 +10,7 @@ query {
         description
         productType
         tags
+        onlineStoreUrl
       }
     }
   }
@@ -23,6 +24,7 @@ const ADD_CARD_MUTATION = `
     $productType: String
     $tags: [String!]
     $images: [ImageInput!]
+    $sku: String
   ) {
     productCreate(
       input: {
@@ -31,6 +33,12 @@ const ADD_CARD_MUTATION = `
         productType: $productType
         tags: $tags
         images: $images
+        variants: [
+          {
+            price: 10.00
+            sku: $sku
+          }
+        ]
       }
     ) {
       product {

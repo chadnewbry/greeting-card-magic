@@ -24,6 +24,7 @@ export function ShopifyCards({ onDeleteSingleCard, onDeleteCards, onCardAdded}) 
         setCards(data.cards);
       }
     }
+
   
     fetchCards();
   
@@ -43,7 +44,7 @@ export function ShopifyCards({ onDeleteSingleCard, onDeleteCards, onCardAdded}) 
       });
   
       if (response.ok) {
-        await fetchCards();
+        onCardAdded = !onCardAdded;
       } else {
         throw new Error("Error deleting cards");
       }
@@ -52,9 +53,18 @@ export function ShopifyCards({ onDeleteSingleCard, onDeleteCards, onCardAdded}) 
     }
   }
 
+  const viewCardInShopify = (onlineStoreUrl) => {
+
+    console.log(onlineStoreUrl)
+   
+    window.open(onlineStoreUrl, "_blank");
+  };
+
+
+
   const rowMarkup = cards.map(
     (
-      { id, title, tags, description  }, 
+      { id, title, tags, description, onlineStoreUrl  }, 
       index,
     ) => (
       <IndexTable.Row 
@@ -62,20 +72,17 @@ export function ShopifyCards({ onDeleteSingleCard, onDeleteCards, onCardAdded}) 
         key={id} 
         selected={selectedResources.includes(id)} 
         position={index}
-        actions={[
-          {
-            content: "Delete",
-            destructive: true, // Makes the button red
-            onAction: () => onDeleteSingleCard(id),
-          },
-        ]}
       >
         <IndexTable.Cell>{title}</IndexTable.Cell>
+        <IndexTable.Cell>{<Button onClick={() => viewCardInShopify(onlineStoreUrl)}>View</Button>}</IndexTable.Cell>
         <IndexTable.Cell>{tags ? tags.join(", ") : ""}</IndexTable.Cell>
         <IndexTable.Cell>{description}</IndexTable.Cell>
       </IndexTable.Row>
     ),
   );
+
+  // https://admin.shopify.com/store/greeting-card-magic-development-store/products/8256905249059
+  // https://tension-contracting-achievement-lamp.trycloudflare.com/admin/products/gid://shopify/Product/8256905249059
 
   return (
     <>
@@ -88,6 +95,7 @@ export function ShopifyCards({ onDeleteSingleCard, onDeleteCards, onCardAdded}) 
               onSelectionChange={handleSelectionChange}
               headings={[
                 { title: "Title" },
+                { title: "View in your Store"},
                 { title: "Tags" },
                 { title: "Description" },
               ]}
