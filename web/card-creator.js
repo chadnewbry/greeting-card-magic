@@ -28,7 +28,6 @@ const ADD_CARD_MUTATION = `
     productCreate(
       input: {
         title: $title
-        description: $description
         descriptionHtml: $descriptionHtml
         productType: $productType
         tags: $tags
@@ -79,22 +78,26 @@ export async function getCards(session) {
 }
 
 export async function addCard(cardDetails, session) {
-  const { _id, title, tags, description, image, image_alt_text, description_html } = cardDetails;
+  const { _id, title, tags, image, image_alt_text, description_html } = cardDetails;
   const client = new shopify.api.clients.Graphql({ session });
-
+  console.log("Trying to add card...")
   try {
     console.log("Trying to add card...")
+
+    const variales = {
+      title,
+      descriptionHtml: description_html,
+      productType: "Card",
+      tags: [...tags, "Card"],
+      images: [{ src: image, altText: image_alt_text }],
+    } 
+
+    console.log("variables", variales)
+
     const response = await client.query({
       data: {
         query: ADD_CARD_MUTATION,
-        variables: {
-          title,
-          description,
-          descriptionHtml: description_html,
-          productType: "Card",
-          tags: [...tags, "Card"],
-          images: [{ src: image, altText: image_alt_text }],
-        },
+        variables: variables,
       },
     });
 

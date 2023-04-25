@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
 import sanityClient from "../../sanityClient";
+import imageUrlBuilder from '@sanity/image-url';
 import { IndexTable, Heading, Card, useIndexResourceState } from "@shopify/polaris";
+import { useAuthenticatedFetch } from "../hooks";
 
 export function SanityCards({ onAddCard }) {
   // ...
   // Move sanityCards related state, useEffect, and helper functions here
   // ...
 
+  const fetch = useAuthenticatedFetch();
+
+  const builder = imageUrlBuilder(sanityClient);
+
   const [sanityCards, setSanityCards] = useState([]); // cards from my sanity headless CMS 
 
     //console.log('sanityCards:', sanityCards);
+  
     const {selectedResources, allResourcesSelected, handleSelectionChange} = 
     useIndexResourceState(sanityCards);
     //console.log("selectedSanityResources:", selectedSanityResources);
@@ -60,23 +67,45 @@ export function SanityCards({ onAddCard }) {
     };
   }, []);
 
-  async function onAddCard(title, tags, description, image, image_alt_text, description_html) {
+  async function onAddCard(selectedResources) {
     try {
-      const response = await fetch("/api/cards/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, tags, description, image, image_alt_text, description_html }),
-      });
+      for (const resourceId of selectedResources) {
+
+        const resource = sanityCards.find((card) => card._id === resourceId);
+
+          if (!resource) {
+            throw new Error(`Resource with ID ${resourceId} not found`);
+          }
+
+        const { title, tags, image, image_alt_text, description_html } = resource;
+
+
+        // Check if tags is an array before using it
+        const tagsArray = Array.isArray(tags) ? tags : [tags]; // ensure tags is an array : to do clean up
+        console.log("Trying on add card...")
+        console.log(resource)
+        
+
+        const imageUrl = builder.image(resource.image.asset._ref).url();
+        console.log(imageUrl)
+        const jsonBlob = JSON.stringify({ title, tags, image: imageUrl, image_alt_text, description_html })
+        console.log(jsonBlob)
+        const response = await fetch("/api/cards/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonBlob,
+        });
   
-      if (response.ok) {
-        await fetchCards();
-      } else {
-        throw new Error("Error adding card");
+        if (!response.ok) {
+          throw new Error(`Error adding card for resource ${resource._id}`);
+        }
       }
+  
+      await fetchSanityCards();
     } catch (error) {
-      console.error(`Error adding card: ${error.message}`);
+      console.error(`Error adding cards: ${error.message}`);
     }
   }
 
@@ -84,11 +113,11 @@ export function SanityCards({ onAddCard }) {
     // Add actions as needed
     {
       content: "Add Card",
-      onAction: () => onAddCard(title, tags, description, image, image_alt_text, description_html),
+      onAction: () => onAddCard(selectedResources),
     }
   ];
 
-  const sanityRowMarkup = sanityCards.map(({ _id, title, tags, description, image, image_alt_text, description_html }, index) => (
+  const sanityRowMarkup = sanityCards.map(({ _id, title, tags, image, image_alt_text, description_html }, index) => (
     <IndexTable.Row
       id={_id}
       key={_id}
@@ -98,7 +127,7 @@ export function SanityCards({ onAddCard }) {
       <IndexTable.Cell>{title}</IndexTable.Cell>
       <IndexTable.Cell>{tags ? tags.join(", ") : ""}</IndexTable.Cell>
       <IndexTable.Cell>
-        {description || description_html}
+        {description_html}
         {/* Render the image if available */}
         {image && <img src={image.asset.url} alt={image_alt_text} />}
       </IndexTable.Cell>
