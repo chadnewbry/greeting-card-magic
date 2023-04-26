@@ -13,7 +13,24 @@ function App() {
   const translate = useTranslate();
   return (
     <Banner title="greeting-card-upsell">
-      {translate('welcome', {extensionPoint})}
+      {translate('welcome', {extensionPoint})}       
     </Banner>
+
+  //   <InlineStack>
+  //   <Image source="/url/for/image" />
+  //   <BlockStack>
+  //     <Text size="large">Heading</Text>
+  //     <Text size="small">Description</Text>
+  //   </BlockStack>
+  //   <Button
+  //     onPress={() => {
+  //       console.log('button was pressed');
+  //     }}
+  //   >
+  //     Button
+  //   </Button>
+  // </InlineStack>
+    
+
   );
 }
