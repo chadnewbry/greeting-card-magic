@@ -3,7 +3,12 @@ import {
   useExtensionApi,
   render,
   Banner,
+  Button,
   useTranslate,
+  BlockStack,
+  Image,
+  Text,
+  InlineStack,
 } from '@shopify/checkout-ui-extensions-react';
 
 render('Checkout::Dynamic::Render', () => <App />);
@@ -12,24 +17,25 @@ function App() {
   const {extensionPoint} = useExtensionApi();
   const translate = useTranslate();
   return (
-    <Banner title="greeting-card-upsell">
-      {translate('welcome', {extensionPoint})}       
-    </Banner>
+    // <Banner title="greeting-card-upsell">
+    //   {translate('welcome', {extensionPoint})}       
+    // </Banner>
 
-  //   <InlineStack>
-  //   <Image source="/url/for/image" />
-  //   <BlockStack>
-  //     <Text size="large">Heading</Text>
-  //     <Text size="small">Description</Text>
-  //   </BlockStack>
-  //   <Button
-  //     onPress={() => {
-  //       console.log('button was pressed');
-  //     }}
-  //   >
-  //     Button
-  //   </Button>
-  // </InlineStack>
+     // small https://i.imgur.com/K44HxVl.png
+    <InlineStack>
+    <Image source="https://i.imgur.com/K44HxVl.png"  style={{ width: '200px', height: 'auto' }}/>
+    <BlockStack>
+      <Text size="large">Add a Custom Greeting Card</Text>
+      <Text size="small">Delight your gift recipient with a custom greeting card.</Text>
+    </BlockStack>
+    <Button
+      onPress={() => {
+        console.log('button was pressed');
+      }}
+    >
+      Button
+    </Button>
+  </InlineStack>
     
 
   );
