@@ -26,14 +26,14 @@ function App() {
     <Image source="https://i.imgur.com/K44HxVl.png"  style={{ width: '200px', height: 'auto' }}/>
     <BlockStack>
       <Text size="large">Add a Custom Greeting Card</Text>
-      <Text size="small">Delight your gift recipient with a custom greeting card.</Text>
+      <Text size="small">Delight your gift recipient with a greeting card</Text>
     </BlockStack>
     <Button
       onPress={() => {
         console.log('button was pressed');
       }}
     >
-      Button
+      Pick Card
     </Button>
   </InlineStack>
     
