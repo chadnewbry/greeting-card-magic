@@ -61,7 +61,7 @@ const SetupFullfilment = () => {
                     Use the name and email below and follow the documentation here: <Link url="https://help.shopify.com/en/manual/shipping/fulfillment-services/custom">https://help.shopify.com/en/manual/shipping/fulfillment-services/custom</Link>
                 </p>
                 <p>The only step you need to do is the the "Activate a fulfillment service" step.</p>
-                {/* <DescriptionList
+                <DescriptionList
                 items={
                     [
                         {
@@ -77,7 +77,7 @@ const SetupFullfilment = () => {
                 spacing = "tight"
                 >
 
-                </DescriptionList> */}
+                </DescriptionList>
                 </TextContainer>
             </Card>
             )
