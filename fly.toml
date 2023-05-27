@@ -15,7 +15,9 @@ primary_region = "dfw"
     grace_period = "5s"
 
 [env]
-PORT = "8081"
-HOST = "https://greeting-card-magic.fly.dev"
-SHOPIFY_API_KEY = "fbf2d5b8d879e08d5df47a813df4c65f"
-SCOPES = "write_products"
+  NODE_ENV="production"
+  PORT = "8081"
+  HOST = "https://greeting-card-magic.fly.dev"
+  SHOPIFY_API_KEY="fbf2d5b8d879e08d5df47a813df4c65f"
+  SCOPES = "write_products"
+  app_name = "greeting-card-magic"
