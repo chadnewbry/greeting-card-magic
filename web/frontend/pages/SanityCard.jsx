@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
-import sanityClient from "../../sanityClient";
-import imageUrlBuilder from '@sanity/image-url';
+
+import { createClient } from "@sanity/client"; 
+import "@sanity/image-url"
+
 import { IndexTable, Heading, Card, useIndexResourceState } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks";
+import imageURLBuilder from '@sanity/image-url'
+
+const client = createClient({
+  projectId: 'nyralf7b',
+  dataset: 'production',
+  useCdn: true,
+});
 
 export function SanityCards({ onAddCardCallback }) {
   // ...
@@ -11,7 +20,7 @@ export function SanityCards({ onAddCardCallback }) {
 
   const fetch = useAuthenticatedFetch();
 
-  const builder = imageUrlBuilder(sanityClient);
+  const builder = imageURLBuilder(client);
 
   const [sanityCards, setSanityCards] = useState([]); // cards from my sanity headless CMS 
 
@@ -38,7 +47,7 @@ export function SanityCards({ onAddCardCallback }) {
   
     async function fetchSanityCards() {
       try {
-        const fetchedSanityCards = await sanityClient.fetch('*[_type == "card"]', {}, { signal });
+        const fetchedSanityCards = await client.fetch('*[_type == "card"]', {}, { signal });
     
         //console.log('Sanity cards:', fetchedSanityCards[0]);
         if (fetchedSanityCards) {
@@ -88,7 +97,7 @@ export function SanityCards({ onAddCardCallback }) {
         
 
         // const imageUrl = builder.image(resource.image.asset._ref).url();
-        console.log(imageUrl)
+        // console.log(imageUrl)
         const jsonBlob = JSON.stringify({ title, sku, tags, image: image_url, image_alt_text, description_html })
         console.log(jsonBlob)
         const response = await fetch("/api/cards/add", {
